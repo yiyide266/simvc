@@ -9,7 +9,7 @@ class StructrueRequest extends DecoratorRequest{
         
 
         $rq -> r["get"]["a"] = !empty($rq -> r["get"]["a"])?$rq -> r["get"]["a"]:DEFAULT_APP;
-        $rq -> r["get"]["c"] = !empty($rq -> r["get"]["c"])?$rq -> r["get"]["c"]:DEFAULT_CONTROLLER;
+        $rq -> r["get"]["c"] = urlchar_up(!empty($rq -> r["get"]["c"])?$rq -> r["get"]["c"]:DEFAULT_CONTROLLER);
         $rq -> r["get"]["m"] = !empty($rq -> r["get"]["m"])?$rq -> r["get"]["m"]:DEFAULT_ACTION;
         $rq -> r["get"]["l"] = !empty($rq -> r["get"]["l"])?$rq -> r["get"]["l"]:DEFAULT_LANG;
         ksort($rq -> r["get"]);
