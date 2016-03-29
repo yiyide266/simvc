@@ -32,14 +32,15 @@ class FileCache {
 
 	public function run( $c, $method, $type ){
 		if( $this -> isAlive() ){
-			echo 'old<br>';
+			//$debug = 'old<br>';
 			$this -> get();
 		}else{
-			echo 'new<br>';
+			//$debug = 'new<br>';
 			$this -> catchFile(  $c , $method  );
 			$this -> set();
 		}
 		set_http_header( $type );
+		//echo $debug;
 		$this -> display();
 	}
 
