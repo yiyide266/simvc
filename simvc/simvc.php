@@ -18,10 +18,10 @@ class simvc{
 		echo '<br>';
 		var_dump(f_uri());
 		echo '<br>';*/
-		$c = "\\"._APP."\\".req(0,"a")."\\controller\\".urlchar_up(req(0,"c"))."Controller";
+		$c = "\\"._APP."\\".req(0,"a")."\\controller\\".req(0,"c")."Controller";
 		//var_dump($c);
-		$run = new lib\controller\CacheController(  new lib\controller\ControllerHandle()  );
-		$run -> process( new $c , $run);
+		$handler = new lib\controller\CacheDecorator(  new $c()  );
+		$handler -> run( req(0,"m") );
 		
 	}
 
