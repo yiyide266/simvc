@@ -15,7 +15,8 @@ class View{
 	
 	
 	public function display( $tpl = null ){
-		$file = is_null($tpl)?"App/".urlchar_trans(request(0,"app"))."/View/".urlchar_trans(request(0,"controller"))."/".request(0,"action").".php":"App/".urlchar_trans(request(0,"app"))."/View/".$tpl;
+		$file = is_null($tpl)?_APP_.'/'.req(0,"a")."/view/".req(0,"c")."/".req(0,"m").".php":_APP_.'/'.req(0,"app")."/view/".$tpl;
+		//var_dump($file);exit;
 		if( !is_file($file) ){
 			throw new Exception("View file not exits");
 		}else{
