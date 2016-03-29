@@ -8,7 +8,7 @@ function conf( $key,$value = null ){
 		$config -> set( $key,$value );
 	}
 }
-/*URLº¯µSTART*/
+/*URLo¡¥?¦ÌSTART*/
 function req( $method ,$key,$value = null ){
 	$r = simvc\lib\request\Request::instance();
 	if( is_null( $value ) ){
@@ -77,5 +77,31 @@ function urlchar_up( $str ){
 	}
 	return $str;
 }
-/*URLº¯µEND*/
+/*URLo¡¥?¦ÌEND*/
+function _crc32( $str ){
+	return sprintf( '%u', crc32( $str ) );
+}
+function mkPath( $path ){
+	$_1 = explode('/',$path);
+	$_2 = "";
+	foreach( $_1 as $v ){
+		$_2 .= $v.'/';
+		if( !file_exists( $_2 ) ){
+			mkdir($_2,0777);
+		}
+	}
+}
+function set_http_header($type){
+	switch ($type){
+		case "json":
+			header("Content-type: application/json");
+		break;
+		case "xml":
+			header("Content-type: application/xml");
+		break;
+		case "text":
+			header("Content-type: text/html");
+		break;
+	}
+}
 ?>
