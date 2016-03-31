@@ -89,7 +89,7 @@ class Request{
         }
         return $uri;
     }
-    //?0?0@?0?6?0?3app?0?8?0?1?0?0·
+    //?0?0@?0?6?0?3app?0?8?0?1?0?0¡¤
     public function aUri(){
         switch ($this -> type){
             case self::NORMAL:
@@ -104,7 +104,7 @@ class Request{
         }
         return $uri;
     }
-    //?0?0@?0?6?0?3?0?7?0?1?0?0?0?4?0?4÷?0?8?0?1?0?0·
+    //?0?0@?0?6?0?3?0?7?0?1?0?0?0?4?0?4¡Â?0?8?0?1?0?0¡¤
     public function cUri(){
         switch ($this -> type){
             case self::NORMAL:
@@ -119,7 +119,7 @@ class Request{
         }
         return $uri;
     }
-    //?0?0@?0?6?0?3·?0?5·¨?0?8?0?1?0?0·
+    //?0?0@?0?6?0?3¡¤?0?5¡¤¡§?0?8?0?1?0?0¡¤
     public function mUri(){
         switch ($this -> type){
             case self::NORMAL:
@@ -174,9 +174,9 @@ class Request{
                 $uri = '/'.$a;
             break;
         }
-        return $uri;
+        return $_SERVER['SCRIPT_NAME'].$uri;
     }
-    //?0?5M?0?2?0?3?0?7?0?1?0?0?0?4?0?4÷Uri
+    //?0?5M?0?2?0?3?0?7?0?1?0?0?0?4?0?4¡ÂUri
     public function assemC( $c ){
         switch ($this -> type){
             case self::NORMAL:
@@ -189,9 +189,9 @@ class Request{
                 $uri = '/'.$c;
             break;
         }
-        return $uri;
+        return $this -> aUri().$uri;
     }
-    //?0?5M?0?2?0?3·?0?5·¨Uri
+    //?0?5M?0?2?0?3¡¤?0?5¡¤¡§Uri
     public function assemM( $a ){
         switch ($this -> type){
             case self::NORMAL:
@@ -204,6 +204,6 @@ class Request{
                 $uri = '/'.$a;
             break;
         }
-        return $uri;
+        return $this -> cUri().$uri;
     }
 }
