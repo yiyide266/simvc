@@ -8,7 +8,7 @@ function conf( $key,$value = null ){
 		$config -> set( $key,$value );
 	}
 }
-/*URLo¡¥?¦ÌSTART*/
+/*URLo?£¤?|¨¬START*/
 function req( $method ,$key,$value = null ){
 	$r = simvc\lib\request\Request::instance();
 	if( is_null( $value ) ){
@@ -33,21 +33,21 @@ function m_uri(){
 	$r = simvc\lib\request\Request::instance();
 	return $r -> mUri();
 }
-function assem_p(){
+function assem_p( $p ){
 	$r = simvc\lib\request\Request::instance();
-	return $r -> assemP();
+	return $r -> assemP( $p );
 }
-function assem_a(){
+function assem_a( $a ){
 	$r = simvc\lib\request\Request::instance();
-	return $r -> assemA();
+	return $r -> assemA( $a );
 }
-function assem_c(){
+function assem_c( $c ){
 	$r = simvc\lib\request\Request::instance();
-	return $r -> assemC();
+	return $r -> assemC( $c );
 }
-function assem_m(){
+function assem_m( $m ){
 	$r = simvc\lib\request\Request::instance();
-	return $r -> assemM();
+	return $r -> assemM( $m );
 }
 function req_get_all(){
 	$r = simvc\lib\request\Request::instance();
@@ -77,7 +77,7 @@ function urlchar_up( $str ){
 	}
 	return $str;
 }
-/*URLo¡¥?¦ÌEND*/
+/*URLo?£¤?|¨¬END*/
 function _crc32( $str ){
 	return sprintf( '%u', crc32( $str ) );
 }
@@ -103,5 +103,35 @@ function set_http_header($type){
 			header("Content-type: text/html");
 		break;
 	}
+}
+
+function handle_err( $type, $status ){
+	switch ($type) {
+		case 0:
+			
+		break;
+		case 1:
+			
+		break;
+		case 2:
+			
+		break;
+		
+	}
+	//ob_start();
+	//ob_end_clean();
+	//ob_clean();
+	//ob_start();
+	if( IS_AJAX ){
+
+		//var_dump($status);
+		require_once( _ERROR_TEMPLATE_JSON );
+	}else{
+		require_once( _ERROR_TEMPLATE_HTML );
+	}
+	//ob_end_flush();
+	//ob_flush();
+	//ob_clean();
+	exit;
 }
 ?>
