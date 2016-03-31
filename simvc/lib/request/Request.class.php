@@ -165,16 +165,16 @@ class Request{
     public function assemA( $a ){
         switch ($this -> type){
             case self::NORMAL:
-                $uri = '?a='.$a;
+                $uri = $_SERVER['SCRIPT_NAME'].'?a='.$a;
             break;
             case self::PATHINFO:
-                $uri = '/'.$a;
+                $uri = $_SERVER['SCRIPT_NAME'].'/'.$a;
             break;
             case self::REWRITE:
-                $uri = '/'.$a;
+                $uri = $this -> entr.'/'.$a;
             break;
         }
-        return $_SERVER['SCRIPT_NAME'].$uri;
+        return $uri;
     }
     //?0?5M?0?2?0?3?0?7?0?1?0?0?0?4?0?4¡ÂUri
     public function assemC( $c ){
