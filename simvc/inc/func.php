@@ -111,20 +111,18 @@ function handle_err( $type, $status ){
 			
 		break;
 		case 1:
-			
+			$status['status'] = 1;
 		break;
 		case 2:
-			
+			$status['status'] = 2;
+		break;
+		case 3:
+			$status['status'] = 3;
 		break;
 		
 	}
-	//ob_start();
-	//ob_end_clean();
-	//ob_clean();
-	//ob_start();
 	if( IS_AJAX ){
-
-		//var_dump($status);
+		set_http_header('json');
 		require_once( _ERROR_TEMPLATE_JSON );
 	}else{
 		require_once( _ERROR_TEMPLATE_HTML );
@@ -133,5 +131,93 @@ function handle_err( $type, $status ){
 	//ob_flush();
 	//ob_clean();
 	exit;
+}
+
+/**
+ * URLÖØ¶¨Ïò
+ * @param string $url ÖØ¶¨ÏòµÄURLµØÖ·
+ * @param integer $time ÖØ¶¨ÏòµÄµÈ´ýÊ±¼ä£¨Ãë£©
+ * @param string $msg ÖØ¶¨ÏòÇ°µÄÌáÊ¾ÐÅÏ¢
+ * @return void
+ */
+function redirect($url, $time=0, $msg='') {
+    //¶àÐÐURLµØÖ·Ö§³Ö
+    $url        = str_replace(array("\n", "\r"), '', $url);
+    if (empty($msg))
+        $msg    = "ÏµÍ³½«ÔÚ{$time}ÃëÖ®ºó×Ô¶¯Ìø×ªµ½{$url}£¡";
+    if (!headers_sent()) {
+        // redirect
+        if (0 === $time) {
+            header('Location: ' . $url);
+        } else {
+            header("refresh:{$time};url={$url}");
+            echo($msg);
+        }
+        exit();
+    } else {
+        $str    = "<meta http-equiv='Refresh' content='{$time};URL={$url}'>";
+        if ($time != 0)
+            $str .= $msg;
+        exit($str);
+    }
+}
+
+
+function send($url, $params = array() , $headers = array()) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        if (!empty($params)) {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+        }
+        if (!empty($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $txt = curl_exec($ch);
+        if (curl_errno($ch)) {
+            //trace(curl_error($ch) , 'Éý¼¶Í¨Öª³ö´í', 'NOTIC', true);
+            
+            return false;
+        }
+        curl_close($ch);
+        $ret = json_decode($txt, true);
+        if (!$ret) {
+            //trace('½Ó¿Ú[' . $url . ']·µ»Ø¸ñÊ½²»ÕýÈ·', 'Éý¼¶Í¨Öª³ö´í', 'NOTIC', true);
+            
+            return false;
+        }
+        
+        return $ret;
+    }
+
+function cookie_get( $key ){
+    $config = 'simvc\lib\cookie\Cookie';
+	$config = $config::instance();
+	return $config -> get( $key );
+}
+function cookie_set( $name, $value, $expire, $path = '/' ){
+    $config = 'simvc\lib\cookie\Cookie';
+	$config = $config::instance();
+	$config -> set( $name, $value, $expire, $path = '/' );
+}
+function cookie_del(  $name, $path = '/'  ){
+    $config = 'simvc\lib\cookie\Cookie';
+	$config = $config::instance();
+	return $config -> del( $name, $path = '/' );
+}
+function sess( $k, $v = '' ){
+	$s = new \PEngine\Libarary\Session\FileSession();
+	if( empty($v) ){
+		return $s -> get( $k );
+	}else{
+		$s -> set( $k, $v );
+	}
+}
+function sess_del( $k ){
+	$s = new \PEngine\Libarary\Session\FileSession();
+	$s -> del( $k );
+}
+function sess_destroy(){
+	$s = new \PEngine\Libarary\Session\FileSession();
+	$s -> destroy();
 }
 ?>
