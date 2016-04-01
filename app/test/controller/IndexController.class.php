@@ -5,6 +5,7 @@ class IndexController extends \simvc\lib\controller\C{
 		'index' => array( true,'text' ),
 		'page' => array( false,'text' ),
 		'get' => array( true,'json' ),
+		'module' => array( true,'text' ),
 	);
 
 	public function index(){
@@ -16,7 +17,7 @@ class IndexController extends \simvc\lib\controller\C{
 		foreach ($a as $key => $value) {
 			echo $value;
 		}*/
-		throw new \Exception("Error Processing Request111", 1);
+		//throw new \Exception("Error Processing Request111", 1);
 		$this -> display();
 		
 	}
@@ -29,8 +30,9 @@ class IndexController extends \simvc\lib\controller\C{
 		echo '<br>';
 		throw new \Exception("Error Processing Request111", 1);
 	}
-	public function error(){
-		
+	public function module(){
+		$m = new \app\test\module\Test();
+		$m -> addOne( array() );
 	}
 
 }
