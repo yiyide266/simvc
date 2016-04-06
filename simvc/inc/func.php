@@ -8,7 +8,7 @@ function conf( $key,$value = null ){
 		$config -> set( $key,$value );
 	}
 }
-/*URLo?£¤?|¨¬START*/
+/*URLo?¡ê¡è?|¡§?START*/
 function req( $method ,$key,$value = null ){
 	$r = simvc\lib\request\Request::instance();
 	if( is_null( $value ) ){
@@ -77,7 +77,7 @@ function urlchar_up( $str ){
 	}
 	return $str;
 }
-/*URLo?£¤?|¨¬END*/
+/*URLo?¡ê¡è?|¡§?END*/
 function _crc32( $str ){
 	return sprintf( '%u', crc32( $str ) );
 }
@@ -108,7 +108,7 @@ function set_http_header($type){
 function handle_err( $type, $status ){
 	switch ($type) {
 		case 0:
-			
+			$status['status'] = 0;
 		break;
 		case 1:
 			$status['status'] = 1;
@@ -121,6 +121,7 @@ function handle_err( $type, $status ){
 		break;
 		
 	}
+	ob_end_clean();
 	if( IS_AJAX ){
 		set_http_header('json');
 		require_once( _ERROR_TEMPLATE_JSON );
@@ -134,17 +135,17 @@ function handle_err( $type, $status ){
 }
 
 /**
- * URLÖØ¶¨Ïò
- * @param string $url ÖØ¶¨ÏòµÄURLµØÖ·
- * @param integer $time ÖØ¶¨ÏòµÄµÈ´ýÊ±¼ä£¨Ãë£©
- * @param string $msg ÖØ¶¨ÏòÇ°µÄÌáÊ¾ÐÅÏ¢
+ * URL???¡§?¨°
+ * @param string $url ???¡§?¨°¦Ì?URL¦Ì??¡¤
+ * @param integer $time ???¡§?¨°¦Ì?¦Ì¨¨¡äy¨º¡À??¡ê¡§??¡ê?
+ * @param string $msg ???¡§?¨°?¡ã¦Ì?¨¬¨¢¨º?D??¡é
  * @return void
  */
 function redirect($url, $time=0, $msg='') {
-    //¶àÐÐURLµØÖ·Ö§³Ö
+    //?¨¤DDURL¦Ì??¡¤?¡ì3?
     $url        = str_replace(array("\n", "\r"), '', $url);
     if (empty($msg))
-        $msg    = "ÏµÍ³½«ÔÚ{$time}ÃëÖ®ºó×Ô¶¯Ìø×ªµ½{$url}£¡";
+        $msg    = "?¦Ì¨ª3???¨²{$time}????o¨®¡Á??¡¥¨¬?¡Áa¦Ì?{$url}¡ê?";
     if (!headers_sent()) {
         // redirect
         if (0 === $time) {
@@ -174,14 +175,14 @@ function send($url, $params = array() , $headers = array()) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $txt = curl_exec($ch);
         if (curl_errno($ch)) {
-            //trace(curl_error($ch) , 'Éý¼¶Í¨Öª³ö´í', 'NOTIC', true);
+            //trace(curl_error($ch) , '¨¦y??¨ª¡§?a3?¡ä¨ª', 'NOTIC', true);
             
             return false;
         }
         curl_close($ch);
         $ret = json_decode($txt, true);
         if (!$ret) {
-            //trace('½Ó¿Ú[' . $url . ']·µ»Ø¸ñÊ½²»ÕýÈ·', 'Éý¼¶Í¨Öª³ö´í', 'NOTIC', true);
+            //trace('?¨®?¨²[' . $url . ']¡¤¦Ì????¨º?2??y¨¨¡¤', '¨¦y??¨ª¡§?a3?¡ä¨ª', 'NOTIC', true);
             
             return false;
         }
