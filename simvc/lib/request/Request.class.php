@@ -89,7 +89,7 @@ class Request{
         }
         return $uri;
     }
-    //?0?0@?0?6?0?3app?0?8?0?1?0?0¡¤
+    //?0?0@?0?6?0?3app?0?8?0?1?0?0?¡è
     public function aUri(){
         switch ($this -> type){
             case self::NORMAL:
@@ -104,7 +104,7 @@ class Request{
         }
         return $uri;
     }
-    //?0?0@?0?6?0?3?0?7?0?1?0?0?0?4?0?4¡Â?0?8?0?1?0?0¡¤
+    //?0?0@?0?6?0?3?0?7?0?1?0?0?0?4?0?4???0?8?0?1?0?0?¡è
     public function cUri(){
         switch ($this -> type){
             case self::NORMAL:
@@ -119,7 +119,7 @@ class Request{
         }
         return $uri;
     }
-    //?0?0@?0?6?0?3¡¤?0?5¡¤¡§?0?8?0?1?0?0¡¤
+    //?0?0@?0?6?0?3?¡è?0?5?¡è?¡ì?0?8?0?1?0?0?¡è
     public function mUri(){
         switch ($this -> type){
             case self::NORMAL:
@@ -145,7 +145,20 @@ class Request{
                 $uri = substr( $uri, 0, -1 );
             break;
             case self::PATHINFO:
-                $uri = '/';
+                $uri = $_SERVER['SCRIPT_NAME'].'/';
+                if( isset($params['a']) ){
+                    $uri .= $params['a'].'/';
+                    unset($params['a']);
+                }
+                if( isset($params['c']) ){
+                    $uri .= $params['c'].'/';
+                    unset($params['c']);
+                }
+                if( isset($params['m']) ){
+                    $uri .= $params['m'].'/';
+                    unset($params['m']);
+                }
+
                 foreach( $params as $k => $v ){
                     $uri .= $k.'/'.$v.'/';
                 }
@@ -153,6 +166,19 @@ class Request{
             break;
             case self::REWRITE:
                 $uri = '/';
+                if( isset($params['a']) ){
+                    $uri .= $params['a'].'/';
+                    unset($params['a']);
+                }
+                if( isset($params['c']) ){
+                    $uri .= $params['c'].'/';
+                    unset($params['c']);
+                }
+                if( isset($params['m']) ){
+                    $uri .= $params['m'].'/';
+                    unset($params['m']);
+                }
+                
                 foreach( $params as $k => $v ){
                     $uri .= $k.'/'.$v.'/';
                 }
@@ -176,7 +202,7 @@ class Request{
         }
         return $uri;
     }
-    //?0?5M?0?2?0?3?0?7?0?1?0?0?0?4?0?4¡ÂUri
+    //?0?5M?0?2?0?3?0?7?0?1?0?0?0?4?0?4??Uri
     public function assemC( $c ){
         switch ($this -> type){
             case self::NORMAL:
@@ -191,7 +217,7 @@ class Request{
         }
         return $this -> aUri().$uri;
     }
-    //?0?5M?0?2?0?3¡¤?0?5¡¤¡§Uri
+    //?0?5M?0?2?0?3?¡è?0?5?¡è?¡ìUri
     public function assemM( $a ){
         switch ($this -> type){
             case self::NORMAL:
