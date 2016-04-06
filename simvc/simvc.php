@@ -2,32 +2,29 @@
 namespace simvc;
 
 class simvc{
-    const EXT = ".class.php";
 
 
 	public function run(){
-		//register_shutdown_function('simvc\simvc::fatalError');
+		register_shutdown_function('simvc\simvc::fatalError');
 		set_error_handler ('simvc\simvc::error');
 		set_exception_handler ( 'simvc\simvc::exception' );
 		spl_autoload_register('simvc\simvc::autoload');
-		
+		ob_start();
 		$c = "\\"._APP."\\".req(0,"a")."\\controller\\".req(0,"c")."Controller";
-		//var_dump($c);
-		
 		$handler = new lib\controller\CacheDecorator(  new $c()  );
-		
 		$handler -> run( req(0,"m") );
-		
 	}
 
 	public static function autoload( $class ){
-		require_once( strtr($class.self::EXT, "\\","/") );
+		require_once( strtr($class._EXT, "\\","/") );
 	}
 
-	/*public static function fatalError() {
-		$status['error_get_last'] = error_get_last();
-		handle_err( 0, $status );
-    }*/
+	public static function fatalError() {
+		$error = error_get_last();
+		if( $error ){
+			handle_err( 0, $error );
+		}
+    }
 
 	public static function error( $errno ,  $errstr ,  $errfile ,  $errline  ){
 		
