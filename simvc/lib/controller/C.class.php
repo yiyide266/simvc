@@ -12,9 +12,13 @@ class C extends Controller{
 	}
 
 	public function getMethodProperty( $method ){
-		return $this -> m_prop[$method];
+		if( isset($this -> m_prop[$method]) ){
+			return $this -> m_prop[$method];
+		}else{
+			return array( false,'text' );
+		}
 	}
-	//ÊµÏÖ¸¸Ïµ·½·¨
+	//¨º¦Ì?????¦Ì¡¤?¡¤¡§
 	public function run( $method ){
 		if( method_exists( $this , $method ) ){
 			$this -> $method();
