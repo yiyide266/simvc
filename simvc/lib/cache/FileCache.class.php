@@ -59,7 +59,7 @@ class FileCache {
 	}
 
 	public function catchFile(  $c , $method  ){
-		ob_start();
+		//ob_start();
 		$c -> $method();
 	    $content = ob_get_contents();
 	    ob_end_clean();
