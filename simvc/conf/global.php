@@ -9,8 +9,8 @@ return array(
 
 
 
-	'url_type' => 0,
-	'url_entr' => '',
+	'url_type' => 1,
+	'url_entr' => '/index.php',
 	'file_cache' => true,
 	'file_cache_life_time' => 5,
 	'sys_request_log' => false,
