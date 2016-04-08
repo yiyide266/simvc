@@ -9,6 +9,11 @@ class simvc{
 		set_error_handler ('simvc\simvc::error');
 		set_exception_handler ( 'simvc\simvc::exception' );
 		spl_autoload_register('simvc\simvc::autoload');
+		$a_f = _APP_.'/'.req(0,'a').'/config/'.'conf.php';
+		if( is_file($a_f) ){
+			$$a_f = include(  $a_f  );
+			conf_merge( $a_f );
+		}
 		ob_start();
 		$c = "\\"._APP."\\".req(0,"a")."\\controller\\".req(0,"c")."Controller";
 		$handler = new lib\controller\CacheDecorator(  new $c()  );
