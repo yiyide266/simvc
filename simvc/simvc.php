@@ -11,7 +11,7 @@ class simvc{
 		spl_autoload_register('simvc\simvc::autoload');
 		$a_f = _APP_.'/'.req(0,'a').'/config/'.'conf.php';
 		if( is_file($a_f) ){
-			$$a_f = include(  $a_f  );
+			$a_f = include(  $a_f  );
 			conf_merge( $a_f );
 		}
 		ob_start();
