@@ -6,9 +6,12 @@ class C extends Controller{
 
 	);
 	protected $view;
+	public $lang;
 
 	public function __construct(){
 		$this -> view = new \simvc\lib\view\View();
+		$file = _APP_.'/'.req(0,'a').'/lang/'.req(0,'l').'.php';
+		$this -> lang = include( $file );
 	}
 
 	public function getMethodProperty( $method ){
