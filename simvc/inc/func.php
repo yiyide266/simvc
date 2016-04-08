@@ -250,4 +250,9 @@ function filter_sql_array( $arr ){
 	}
 	return true;
 }
+
+function output( $type, $msg = '', $data = array() ){
+	echo json_encode( array( 'status' => $type, 'msg' => $msg, 'data' => $data ) );
+	exit;
+}
 ?>
