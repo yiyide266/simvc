@@ -2,10 +2,9 @@
 namespace simvc\lib\Session;
 class FileSession extends Session{
 
-	
 
 	public function get( $key ){
-		return isset($_SESSION['simvc'][$key])?$_SESSION[$key]:null;
+		return isset($_SESSION['simvc'][$key])?$_SESSION['simvc'][$key]:null;
 	}
 	
 	public function set( $key, $val ){
@@ -22,7 +21,7 @@ class FileSession extends Session{
 	}
 	
 	/*
-	·ÃÎÊÏÞÖÆ
+	¡¤??¨º?T??
 	*/
 	public function frequency( $name, $expire ){
 		if( isset( $_SESSION['simvc'][$name] ) ){
@@ -38,9 +37,10 @@ class FileSession extends Session{
 		}
 	}
 	/*
-	·ÀÖ¹ÖØ¸´Ìá½»
+	¡¤¨¤?1???¡ä¨¬¨¢??
 	*/
 	public function sublimit_m( $name ){
+		
 		$token = rand(10000000,99999999);
 		$_SESSION['simvc'][$name] = $token;
 		return $token;
