@@ -211,7 +211,7 @@ function cookie_del(  $name, $path = '/'  ){
 	return $config -> del( $name, $path = '/' );
 }
 function sess( $k, $v = '' ){
-	$s = new \PEngine\Libarary\Session\FileSession();
+	$s = simvc\lib\session\FileSession::instance();
 	if( empty($v) ){
 		return $s -> get( $k );
 	}else{
@@ -219,11 +219,35 @@ function sess( $k, $v = '' ){
 	}
 }
 function sess_del( $k ){
-	$s = new \PEngine\Libarary\Session\FileSession();
+	$s = simvc\lib\session\FileSession::instance();
 	$s -> del( $k );
 }
 function sess_destroy(){
-	$s = new \PEngine\Libarary\Session\FileSession();
+	$s = simvc\lib\session\FileSession::instance();
 	$s -> destroy();
+}
+
+function sess_token_set( $k ){
+	$s = simvc\lib\session\FileSession::instance();
+	return $s -> sublimit_m( $k );
+}
+function sess_token_check( $k, $v ){
+	$s = simvc\lib\session\FileSession::instance();
+	return $s -> sublimit_c( $k, $v );
+}
+function sess_token_del( $k ){
+	$s = simvc\lib\session\FileSession::instance();
+	$s -> sublimit_d( $k );
+}
+
+
+function filter_sql( $param ){
+	return !preg_match( '/(\s+or+\s)|(;)/', $param );
+}
+function filter_sql_array( $arr ){
+	foreach( $arr as $k => $v ){
+		if(filter_sql( $v )){ return false; }
+	}
+	return true;
 }
 ?>
