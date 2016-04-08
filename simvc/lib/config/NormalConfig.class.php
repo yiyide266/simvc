@@ -22,7 +22,7 @@ class NormalConfig extends Config{
 		$this -> config[$key] = $value;
 	}
 	public function merge( $conf ){
-		$this -> config = array_merge_recursive ( $this -> config ,  $conf );
+		$this -> config = array_merge ( $this -> config ,  $conf );
 	}
 }
 ?>
