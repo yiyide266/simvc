@@ -8,6 +8,11 @@ function conf( $key,$value = null ){
 		$config -> set( $key,$value );
 	}
 }
+function conf_merge( $conf ){
+    $config = 'simvc\lib\config\\'._CONFIG.'Config';
+	$config = $config::instance();
+	$config -> merge( $conf );
+}
 /*URLo?¡ê¡è?|¡§?START*/
 function req( $method ,$key,$value = null ){
 	$r = simvc\lib\request\Request::instance();
