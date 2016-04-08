@@ -6,5 +6,6 @@ abstract class Config{
     
     abstract public function get( $key );
     abstract public function set( $key,$value );
+    abstract public function merge( $conf );
 }
 ?>
