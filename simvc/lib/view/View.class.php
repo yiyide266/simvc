@@ -9,7 +9,7 @@ class View{
 	public function __construct(){}
 	
 	
-	public function assgin( $k ,$v ){
+	public function assign( $k ,$v ){
 		$this -> val[$k] = $v;
 	}
 	
