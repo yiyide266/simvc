@@ -21,5 +21,8 @@ class NormalConfig extends Config{
 	public function set( $key,$value ){
 		$this -> config[$key] = $value;
 	}
+	public function merge( $conf ){
+		$this -> config = array_merge_recursive ( $this -> config ,  $conf );
+	}
 }
 ?>
