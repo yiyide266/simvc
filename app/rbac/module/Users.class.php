@@ -1,13 +1,17 @@
 <?php
 namespace app\rbac\module;
 class Users extends \simvc\lib\module\Module{
-	protected $tab_name = 'sim_users';
+	protected $tab_name = 'users';
+
+	public static function who(){
+		return __CLASS__;
+	}
 
 	public function addOne( $data ){
 		if( filter_sql_array( $data ) ){ return array(0); }
 		$sql = sprintf( 'call insert_user(\'%s\', \'%s\', \'%s\', \'%d\', \'%d\')',_crc32($data['u_account']), $data['u_account'], md5($data['u_pass']), $data['u_pid'], $data['u_t_s']  );
 		$re = $this -> getRow( $sql );
-		if( $re['status'] == 1 ){ return array(1,$re['u_id']); }
+		if( in_array($re['status'], array( 1,4 )) ){ return array(1,$re['u_id']); }
 		else{ return array(2); }
 	}
 	public function addMulti( $data ){}
