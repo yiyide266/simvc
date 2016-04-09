@@ -1,7 +1,11 @@
 <?php
 namespace app\rbac\module;
 class Roles extends \simvc\lib\module\Module{
-	protected $tab_name = 'sim_roles';
+	protected $tab_name = 'roles';
+
+	public static function who(){
+		return __CLASS__;
+	}
 
 	public function addOne( $data ){
 		if( filter_sql_array( $data ) ){ return array(0); }
