@@ -16,7 +16,7 @@ class UserRolesController extends \simvc\lib\controller\C{
 		$data['r_id'] = $_POST['r_id'];
 		$m = new \app\rbac\module\UserRoles();
 		$re = $m -> addOne( $data );
-		if( $re[0] == 1 ){
+		if( $re[0] == 2 ){
 			output( 5, $this -> lang[1] );
 		}else{
 			output( 4, $this -> lang[2] );
