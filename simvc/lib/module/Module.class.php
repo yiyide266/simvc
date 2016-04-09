@@ -4,7 +4,8 @@ abstract class Module{
 	protected $db;
 	protected $filter = array();
 	protected $tab_name;
-	
+	private static $instance = array();
+
 	/*Óï¾ä½âÎö*/
 	protected $lastSql;
 	protected $condition;
@@ -29,6 +30,7 @@ abstract class Module{
 	protected $join;
 	protected $group;
 	protected $having;*/
+	abstract public static function who();
 
 	abstract public function addOne( $data );
 	abstract public function addMulti( $data );
@@ -39,8 +41,20 @@ abstract class Module{
 	abstract public function getOne( $data );
 	abstract public function getMulti( $data );
 	
+
+	public static function instance(){
+		$m_hash = _crc32(static::who());
+		//var_dump($m_hash);
+		if( !isset(self::$instance[$m_hash]) ){
+			//echo static::who().' call me';
+;			self::$instance[$m_hash] = new static();
+		}
+		return self::$instance[$m_hash];
+	}
+
 	public function __construct( ){
 		$this -> db = Db::instance('Mysql' , array( 'dsn' => 'mysql:host='.conf( 'sys_db_host' ).';dbname='.conf( 'sys_db_name' ), 'user' => conf( 'sys_db_user' ) , 'pass' => conf( 'sys_db_pass' ) , 'charset' => conf( 'sys_db_charset' ) ));
+		$this -> tab_name = conf( 'sys_db_prefix' ).$this -> tab_name;
 	}
 	
 	/*·â×°Óï¾ä*/
