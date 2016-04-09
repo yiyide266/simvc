@@ -3,6 +3,10 @@ namespace app\rbac\controller;
 class RolesController extends \simvc\lib\controller\C{
 	
 
+	public static function who(){
+		return __CLASS__;
+	}
+	
 	public function addPage(){
 		$token = sess_token_set( 'app_rbac_role_add' );
 		$this -> assign( 'token', $token );
