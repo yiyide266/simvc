@@ -41,7 +41,7 @@ INDEX roles_search ( `u_id`, `r_id` )
 CREATE TABLE `sim_cnode` (
 `n_id`	SMALLINT( 5 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `n_name` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-`n_spec` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+`n_spec` VARCHAR( 256 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 `n_icon` TINYINT( 3 ) UNSIGNED NOT NULL DEFAULT '0',
 `n_type` TINYINT( 3 ) UNSIGNED NOT NULL DEFAULT '0' CHECK (`n_type`<3),
 `n_pid` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
@@ -193,7 +193,7 @@ status:5,插入子节点成功，返回插入n_id
 */
 DROP PROCEDURE IF EXISTS insert_cnode;
 DELIMITER //
-CREATE PROCEDURE insert_cnode( IN p_name VARCHAR(32), IN p_spec VARCHAR(32), IN p_icon INT(3), IN p_type INT(3), IN p_pid INT(10), IN p_t_s INT(10) )
+CREATE PROCEDURE insert_cnode( IN p_name VARCHAR(32), IN p_spec VARCHAR(256), IN p_icon INT(3), IN p_type INT(3), IN p_pid INT(10), IN p_t_s INT(10) )
 BEGIN
 DECLARE d_count INT DEFAULT 0;
 DECLARE d_status INT DEFAULT 0;
