@@ -6,6 +6,7 @@ return array(
 	'sys_db_pass' => '',
 	'sys_db_name' => 'dbmark',
 	'sys_db_charset' => 'utf8',
+	'sys_db_prefix' => '',
 
 
 
