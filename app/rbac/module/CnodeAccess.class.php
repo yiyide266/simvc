@@ -10,7 +10,18 @@ class CnodeAccess extends \simvc\lib\module\Module{
 	public function addOne( $data ){
 		if( filter_sql_array( $data ) ){ return array(0); }
 		if( $this -> checkDuplicate( $data ) ){ return array(1); }
-		if( $this -> checkPid( $data ) ){ return array(2); }
+		//if( $this -> checkPid( $data ) ){ return array(2); }
+		$m = \app\rbac\module\Cnode::instance();
+		$re = $m -> getFathers( $data['n_id'] );
+		if( $re[0] == 0 ){ return array(2);  }
+		if( !empty($re[1]) ){
+			foreach ($re[1] as $v) {
+				$p = array( 'r_id' => $data['r_id'], 'n_id' => $v );
+				if( !$this -> checkDuplicate( $p ) ){
+					$this -> add( $p );
+				}
+			}
+		}
 		$instId = $this -> add( $data );
 		if($instId){
 			return array(3,$instId);
