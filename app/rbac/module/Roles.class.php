@@ -21,8 +21,9 @@ class Roles extends \simvc\lib\module\Module{
 	public function alterMulti( $data ){}
 	public function delOne( $data ){
 		$data = intval($data);
-		$re = $this -> where(array( 'r_id' => $data ) ) -> delete();
-		if( $re == 1 ){ return array(1); }
+		$re_1 = $this -> where(array( 'r_id' => $data ) ) -> delete();
+		 
+		if( $re_1 == 1 ){ return array(1); }
 		else{ return array(2); }
 	}
 	public function delMulti( $data ){}
