@@ -309,3 +309,36 @@ END
 DELIMITER ;
 call drop_cnode( 2 ); 
 
+/*
+role删除存储过程
+status:0,执行失败，回滚
+status:1,执行成功，返回影响行数effect
+*/
+DROP PROCEDURE IF EXISTS drop_role;
+DELIMITER //
+CREATE PROCEDURE drop_role( IN r_id INT(10) )
+BEGIN
+
+DECLARE d_status INT DEFAULT 0;
+DECLARE d_error INT DEFAULT 0;
+
+DECLARE d_effect INT DEFAULT 0;
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET d_error=1;
+
+START TRANSACTION;
+DELETE FROM `sim_roles` WHERE `r_id` = r_id;
+DELETE FROM `sim_user_roles` WHERE `r_id` = r_id;
+DELETE FROM `sim_cnode_access` WHERE `r_id` = r_id;
+SET d_effect = ROW_COUNT();
+IF d_error = 1 THEN
+	ROLLBACK;
+ELSE
+	COMMIT;
+	SET d_status = 1;
+END IF;
+
+SELECT d_status AS `status`, d_effect as `effect`;
+END
+//
+DELIMITER ;
+call drop_role( 2 ); 
