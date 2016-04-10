@@ -46,6 +46,12 @@ class CnodeController extends \simvc\lib\controller\C{
 		var_dump( $re );
 	}
 
+	public function getFathers(){
+		$m = \app\rbac\module\Cnode::instance();
+		$id = req( 0,'id' );
+		var_dump($m -> getFathers($id));
+	}
+
 
 }
 
