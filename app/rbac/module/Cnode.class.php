@@ -46,6 +46,21 @@ class Cnode extends \simvc\lib\module\Module{
 		return $re;
 	}
 
+	public function getFathers( $data, $fa=array() ){
+		$cat = $this -> getOne( $data );
+		if( $cat[0] == 0 ){
+			//var_dump($cat);
+			if($cat[1]['n_pid']!=0){
+				$fa[] = $cat[1]['n_pid'];
+				return $this -> getFathers($cat[1]['n_pid'], $fa);
+			}else{
+				return array( 1 , $fa );
+			}
+		}else{
+			return array(0);
+		}
+	}
+
 	public function pagination( $data, $page, $size = 5, $field = '*' ){
 		$page = empty($page)?1:$page;
 		$size = empty($size)?10:$size;
