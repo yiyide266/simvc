@@ -18,7 +18,7 @@ INDEX tree_search ( `u_t_f`, `u_t_r_l`, `u_t_r_r`, `u_t_l`, `u_t_s` )
 CREATE TABLE `sim_sess` (
 `u_id` INT( 10 ) UNSIGNED NOT NULL PRIMARY KEY ,
 `u_sess` INT( 10 ) UNSIGNED NOT NULL ,
-`u_sess_expire` INT( 10 ) UNSIGNED NOT NULL ,
+`u_sess_expire` INT( 10 ) UNSIGNED NOT NULL 
 ) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 
@@ -57,8 +57,8 @@ CREATE TABLE `sim_cnode_access` (
 `ca_id` SMALLINT( 5 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `r_id` SMALLINT( 5 ) UNSIGNED NOT NULL,
 `n_id` SMALLINT( 5 ) UNSIGNED NOT NULL,
-FOREIGN KEY (`r_id`) REFERENCES `_roles`(`r_id`),
-FOREIGN KEY (`n_id`) REFERENCES `_cnode`(`n_id`),
+FOREIGN KEY (`r_id`) REFERENCES `sim_roles`(`r_id`),
+FOREIGN KEY (`n_id`) REFERENCES `sim_cnode`(`n_id`),
 INDEX cnode_search ( `r_id`, `n_id` )
 ) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
@@ -177,7 +177,7 @@ SELECT d_status AS `status`, d_effect as `effect`;
 END
 //
 DELIMITER ;
-call drop_user( 2 ); 
+call drop_user( 2 );  
 
 
 
@@ -190,6 +190,7 @@ status:2,父节点不存在
 status:3,子节点的type规则不符
 status:4,插入祖系节点失败，回滚
 status:5,插入子节点成功，返回插入n_id
+status:6,节点名称有重复
 */
 DROP PROCEDURE IF EXISTS insert_cnode;
 DELIMITER //
@@ -208,17 +209,25 @@ DECLARE d_t_l INT DEFAULT 0;
 DECLARE d_t_s INT DEFAULT 0;
 DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET d_error=1;
 
+
+
 IF p_pid = 0 THEN
-	START TRANSACTION;
-	INSERT INTO `sim_cnode` ( `n_name`, `n_spec`, `n_icon`, `n_type`, `n_pid`, `n_t_f`, `n_t_r_l`, `n_t_r_r`, `n_t_l`, `n_t_s` ) VALUES ( p_name, p_spec, p_icon, d_type, d_pid, d_t_f, d_t_r_l, d_t_r_r, d_t_l, p_t_s);
-	SET d_id = LAST_INSERT_ID();
-	UPDATE `sim_cnode` SET `n_t_f` = d_id WHERE `n_id` = d_id;
-	IF d_error = 1 THEN
-		ROLLBACK;
-		SELECT d_status AS `status`;
+	SELECT  COUNT(*) INTO  d_count FROM `sim_cnode` WHERE `n_type` = d_type AND `n_name` = p_name ;
+	IF d_count = 0 THEN
+		START TRANSACTION;
+		INSERT INTO `sim_cnode` ( `n_name`, `n_spec`, `n_icon`, `n_type`, `n_pid`, `n_t_f`, `n_t_r_l`, `n_t_r_r`, `n_t_l`, `n_t_s` ) VALUES ( p_name, p_spec, p_icon, d_type, d_pid, d_t_f, d_t_r_l, d_t_r_r, d_t_l, p_t_s);
+		SET d_id = LAST_INSERT_ID();
+		UPDATE `sim_cnode` SET `n_t_f` = d_id WHERE `n_id` = d_id;
+		IF d_error = 1 THEN
+			ROLLBACK;
+			SELECT d_status AS `status`;
+		ELSE
+			COMMIT;
+			SET d_status = 1;
+			SELECT d_status AS `status`, d_id AS `n_id`;
+		END IF;
 	ELSE
-		COMMIT;
-		SET d_status = 1;
+		SET d_status = 6;
 		SELECT d_status AS `status`, d_id AS `n_id`;
 	END IF;
 ELSE
@@ -233,24 +242,30 @@ ELSE
 			SELECT d_status AS `status`;
 		ELSE
 
-			SET d_t_r_l = d_t_r_r;
-			SET d_t_r_r = d_t_r_r + 1;
-			SET d_t_l = d_t_l + 1;
-			START TRANSACTION;
-			UPDATE `sim_cnode` SET `n_t_r_l` = `n_t_r_l` + 2 WHERE `n_t_f` = d_t_f AND `n_t_r_l` > d_t_r_l;
-			SET d_t_l = d_t_l - 1;
-			UPDATE `sim_cnode` SET `n_t_r_r` = `n_t_r_r` + 2 WHERE `n_t_f` = d_t_f AND `n_t_r_r` >= d_t_r_l;
-			SET d_t_l = d_t_l + 1;
-			INSERT INTO `sim_cnode` ( `n_name`, `n_spec`, `n_icon`, `n_type`, `n_pid`, `n_t_f`, `n_t_r_l`, `n_t_r_r`, `n_t_l`, `n_t_s` ) VALUES ( p_name, p_spec, p_icon, p_type, p_pid, d_t_f, d_t_r_l, d_t_r_r, d_t_l, p_t_s);
-			SET d_id = LAST_INSERT_ID();
-			IF d_error = 1 THEN
-				ROLLBACK;
-				SET d_status = 4;
-				SELECT d_status AS `status`;
+			SELECT  COUNT(*) INTO  d_count FROM `sim_cnode` WHERE `n_type` = p_type AND `n_t_f` = d_t_f AND `n_name` = p_name ;
+			IF d_count = 0 THEN
+				SET d_t_r_l = d_t_r_r;
+				SET d_t_r_r = d_t_r_r + 1;
+				SET d_t_l = d_t_l + 1;
+				START TRANSACTION;
+				UPDATE `sim_cnode` SET `n_t_r_l` = `n_t_r_l` + 2 WHERE `n_t_f` = d_t_f AND `n_t_r_l` > d_t_r_l;
+				SET d_t_l = d_t_l - 1;
+				UPDATE `sim_cnode` SET `n_t_r_r` = `n_t_r_r` + 2 WHERE `n_t_f` = d_t_f AND `n_t_r_r` >= d_t_r_l;
+				SET d_t_l = d_t_l + 1;
+				INSERT INTO `sim_cnode` ( `n_name`, `n_spec`, `n_icon`, `n_type`, `n_pid`, `n_t_f`, `n_t_r_l`, `n_t_r_r`, `n_t_l`, `n_t_s` ) VALUES ( p_name, p_spec, p_icon, p_type, p_pid, d_t_f, d_t_r_l, d_t_r_r, d_t_l, p_t_s);
+				SET d_id = LAST_INSERT_ID();
+				IF d_error = 1 THEN
+					ROLLBACK;
+					SET d_status = 4;
+					SELECT d_status AS `status`;
+				ELSE
+					COMMIT;
+					SET d_status = 5;
+					SELECT d_status AS `status`, d_id AS `n_id`;
+				END IF;
 			ELSE
-				COMMIT;
-				SET d_status = 5;
-				SELECT d_status AS `status`, d_id AS `n_id`;
+				SET d_status = 6;
+				SELECT d_status AS `status`;
 			END IF;
 		END IF;
 	END IF;
