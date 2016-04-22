@@ -1,12 +1,12 @@
 <?php
 namespace simvc\lib\module;
-abstract class Module{
+class Module{
 	protected $db;
 	protected $filter = array();
 	protected $tab_name;
 	private static $instance = array();
 
-	/*Óï¾ä½âÎö*/
+	/*¨®????a??*/
 	protected $lastSql;
 	protected $condition;
 	protected $symbol = array(
@@ -22,28 +22,18 @@ abstract class Module{
 				'in' => 'IN',
 				'not in' => 'NOT IN',
 			);
-	/*protected $where;
-	protected $order;
-	protected $limit;
-	protected $field;
-	protected $alias;
-	protected $join;
-	protected $group;
-	protected $having;*/
-	abstract public static function who();
+	
+	public static function who(){ return false; }
 
-	abstract public function addOne( $data );
-	abstract public function addMulti( $data );
-	abstract public function alterOne( $data );
-	abstract public function alterMulti( $data );
-	abstract public function delOne( $data );
-	abstract public function delMulti( $data );
-	abstract public function getOne( $data );
-	abstract public function getMulti( $data );
+	
 	
 
 	public static function instance(){
-		$m_hash = _crc32(static::who());
+		$who = static::who();
+		if( $who == false ){
+			throw new Exception("'who' method mush be set at this module!");
+		}
+		$m_hash = _crc32($who);
 		//var_dump($m_hash);
 		if( !isset(self::$instance[$m_hash]) ){
 			//echo static::who().' call me';
@@ -57,7 +47,7 @@ abstract class Module{
 		$this -> tab_name = conf( 'sys_db_prefix' ).$this -> tab_name;
 	}
 	
-	/*·â×°Óï¾ä*/
+	/*¡¤a¡Á¡ã¨®???*/
 	public function where( $data ){
 		$this -> condition['where'] = '';
 		if(empty($data)){ 
@@ -203,7 +193,7 @@ abstract class Module{
 	}
 	
 	/*
-	Ð´Èë·½·¨
+	D¡ä¨¨?¡¤?¡¤¡§
 	*/
 	public function add( $data ){
 		
@@ -211,37 +201,37 @@ abstract class Module{
 		return $this -> db -> insert( $this -> lastSql );
 	}
 	/*
-	ÐÞ¸Ä·½·¨
+	DT??¡¤?¡¤¡§
 	*/
 	public function update( $data ){
 		
 		return $this -> db -> run( $this -> assem_update( $data ), 1 );
 	}
 	/*
-	µÝÔö£¨¼õ£©·½·¨
+	¦ÌY??¡ê¡§??¡ê?¡¤?¡¤¡§
 	*/
 	public function setInc( $data ){
 		
 		return $this -> db -> run( $this -> assem_setInc( $data ), 1 );
 	}
 	
-	/*·µ»ØÒ»ÐÐ·½·¨*/
+	/*¡¤¦Ì??¨°?DD¡¤?¡¤¡§*/
 	public function find(){
 		$this -> limit( '1' );
 		
 		return $this -> db -> getRow( $this -> assem_select() );
 	}
-	/*·µ»Ø¶àÐÐ·½·¨*/
+	/*¡¤¦Ì???¨¤DD¡¤?¡¤¡§*/
 	public function select(){
 		
 		return $this -> db -> getRows( $this -> assem_select() );
 	}
-	/*É¾³ý·½·¨*/
+	/*¨¦?3y¡¤?¡¤¡§*/
 	public function delete(){
 		
 		return $this -> db -> run( $this -> assem_delete(), 1 );
 	}
-	/*count·½·¨*/
+	/*count¡¤?¡¤¡§*/
 	public function count(){
 		$this -> field( 'count(*) AS count' );
 		
@@ -249,28 +239,28 @@ abstract class Module{
 		
 		return $re['count'];
 	}
-	/*Ö´ÐÐÓï¾ä*/
+	/*?¡äDD¨®???*/
 	public function run( $sql , $type = 0 ){
 		return $this -> db -> run( $sql , $type );
 	}
-	/*«@È¡Ò»ÁÐ*/
+	/*?@¨¨?¨°?¨¢D*/
 	public function getRow( $sql ){
 		return $this -> db -> getRow( $sql );
 	}
-	/*«@È¡¶àÁÐ*/
+	/*?@¨¨??¨¤¨¢D*/
 	public function getRows( $sql ){
 		return $this -> db -> getRows( $sql );
 	}
 	
-	/*¿ªÆôÊÂÎñ*/
+	/*?a??¨º???*/
 	public function startTrans(){
 		$this -> db -> startTrans();
 	}
-	/*»Ø¹öÊÂÎñ*/
+	/*??1?¨º???*/
 	public function rollBack(){
 		$this -> db -> rollBack();
 	}
-	/*Ìá½»ÊÂÎñ*/
+	/*¨¬¨¢??¨º???*/
 	public function commit(){
 		$this -> db -> commit();
 	}
