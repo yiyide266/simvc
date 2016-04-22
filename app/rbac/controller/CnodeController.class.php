@@ -18,24 +18,36 @@ class CnodeController extends \simvc\lib\controller\C{
 		$data['n_type'] = $_POST['n_type'];
 		$data['n_pid'] = $_POST['n_pid'];
 		$data['n_t_s'] = $_POST['n_t_s'];
-		$m = new \app\rbac\module\Cnode();
+		$m = \app\rbac\module\Cnode::instance();
 		$re = $m -> addOne( $data );
 		if( $re[0] == 1 ){
-			output( 5, $this -> lang[1] );
+			output( 5, $this -> lang[1], $re[1] );
 		}else{
-			output( 4, $this -> lang[2] );
+			output( 4, $this -> lang[2], $re[1] );
 		}
 	}
 
-	public function get(){
-		$m = new \app\rbac\module\Cnode();
+	public function del(){
+		$m = \app\rbac\module\Cnode::instance();
 		$id = req( 0,'id' );
-		$re = $m -> getOne( $id );
-		if( $re[0] == 1 ){
-			output( 5, '', $re);
+		$re = $m -> delOne( $id );
+		if( in_array($re[0], array(1))){
+			output( 5, '', $re[1]);
 		}else{
-			output( 4, '' );
+			output( 4, '', $re[1]);
 		}
+	}
+
+	public function getOne(){
+		$m = \app\rbac\module\Cnode::instance();
+		$id = req( 0,'id' );
+		var_dump($m -> getOne($id));
+	}
+
+	public function getChilds(){
+		$m = \app\rbac\module\Cnode::instance();
+		$id = req( 0,'id' );
+		var_dump($m -> getChilds($id));
 	}
 
 	public function pagin(){
