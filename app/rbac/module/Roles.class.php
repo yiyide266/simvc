@@ -1,59 +1,84 @@
 <?php
 namespace app\rbac\module;
+/**
+ * Roles database touch layer
+ * @category   rbac
+ * @package  rbac
+ * @subpackage  lib.module
+ * @author    kimmy
+ */
 class Roles extends \simvc\lib\module\Module{
+	/**
+	 * declare table name in this module 
+	 * @attribute  protected
+	 * @type string
+	 */
 	protected $tab_name = 'roles';
-
+	/**
+	 * declare this module name
+	 * @param  void
+	 * @return string
+	 */
 	public static function who(){
 		return __CLASS__;
 	}
-
+	/**
+	 * insert 
+	 * @param  array   $data	   db field array
+	 * @return array       status
+	 *   				   [0]=>
+	 *        				0:false(parameter detect false)
+	 *        				1:false(r_name detect false)
+	 *        				2:success(bring back last insert id)
+	 *        				3:false(insert false)
+	 *   				   [1]=>dependent on [0],last insert id or unset
+	 */
 	public function addOne( $data ){
 		if( filter_sql_array( $data ) ){ return array(0); }
+		if( empty( $data['r_name'] ) ){ return array(1); }
 		$instId = $this -> add( $data );
 		if($instId){
-			return array(1,$instId);
+			return array(2,$instId);
 		}else{
-			return array(2);
+			return array(3);
 		}
 	}
-	public function addMulti( $data ){}
-	public function alterOne( $data ){}
-	public function alterMulti( $data ){}
+	
+	/**
+	 * delete a role
+	 * @param  int   $data   r_id
+	 * @return array       return effect row count
+	 */
 	public function delOne( $data ){
 		$data = intval($data);
-		$re_1 = $this -> where(array( 'r_id' => $data ) ) -> delete();
-		 
-		if( $re_1 == 1 ){ return array(1); }
-		else{ return array(2); }
+		return $this -> where(array( 'r_id' => $data ) ) -> delete();
 	}
-	public function delMulti( $data ){}
+	
+	/**
+	 * get a role return it
+	 * @param  int   $data   n_id
+	 * @return mixed       return node row or false when row is not exsist
+	 */
 	public function getOne( $data ){
 		$data = intval($data);
-		$re = $this -> where( array( 'r_id' => $data ) ) -> find();
-		if( !empty( $re ) ){
-			 return array(1,$re);
-		}else{
-			 return array(2);
-		}
+		return $this -> where( array( 'r_id' => $data ) ) -> find();
 	}
-	public function getMulti( $data ){}
-
+	
+	/**
+	 * pagination
+	 * @param  array  	$data    query params
+	 * @param  int  	$page    page num
+	 * @param  int  	$size    size num
+	 * @param  string  	$field   fields sql
+	 * @return array       [[int] total row num][[int] total page num][[int] current page num][[int] current size num][[array] rows]
+	 */
 	public function pagination( $data, $page, $size = 5, $field = '*' ){
 		$page = empty($page)?1:$page;
 		$size = empty($size)?10:$size;
-		//var_dump($page);
-		//Í³¼Æ×ÜÊý
 		$count = $this -> where( $data ) -> count();
-		//var_dump($size);
-		//¼ÆËã×ÜÒ³Êý
 		$totalpage = ceil( $count/$size );
-		//var_dump($total);exit;
-		//ÏÞ¶¨µ±Ç°Ò³Êý
 		$page = $page<=0?1:($page>$totalpage?$totalpage:$page);
-		//Éè¶¨Æ«ÒÆÖµ
 		$offset = ($page-1)*$size;
-		//var_dump(array($offset,$size));
-		//È¡»ØÁÐ
 		$re = $this -> field( $field ) -> where( $data ) -> limit( array($offset,$size) ) -> select();
 		return array( $count,$totalpage, $page, $size, $re );
 	}
