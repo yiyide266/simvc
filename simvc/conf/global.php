@@ -15,7 +15,7 @@ return array(
 	'file_cache' => true,
 	'file_cache_life_time' => 5,
 	'sys_request_log' => false,
-	'sys_user_expire' => 3600
+	'sys_user_login_expire' => 3600
 );
 
 
