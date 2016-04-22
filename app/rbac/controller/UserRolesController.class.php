@@ -22,25 +22,22 @@ class UserRolesController extends \simvc\lib\controller\C{
 			output( 4, $this -> lang[2] );
 		}
 	}
-
-	public function get(){
-		$m = new \app\rbac\module\UserRoles();
-		$id = req( 0,'id' );
-		$re = $m -> getOne( $id );
-		if( $re[0] == 1 ){
-			output( 5, '', $re);
-		}else{
-			output( 4, '' );
-		}
-	}
-
-	public function pagin(){
-		$m = new \app\rbac\module\UserRoles();
-		$page = req( 0, 'p' );
-		$size = req( 0, 's' );
-		$re = $m -> pagination( array(), $page, $size, array('u_id','u_account') );
+	public function del(){
+		$m = \app\rbac\module\UserRoles::instance();
+		$data['u_id'] = req( 0,'uid' );
+		$data['r_id'] = req( 0,'rid' );
+		$re = $m -> delOne( $data );
 		var_dump( $re );
 	}
+	public function get(){
+		$m = new \app\rbac\module\UserRoles();
+		$data['u_id'] = req( 0,'uid' );
+		$data['r_id'] = req( 0,'rid' );
+		$re = $m -> getOne( $data );
+		var_dump( $re );
+	}
+
+	
 
 
 }
