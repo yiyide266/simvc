@@ -20,11 +20,17 @@ class RolesController extends \simvc\lib\controller\C{
 		$data['r_des'] = $_POST['r_des'];
 		$m = new \app\rbac\module\Roles();
 		$re = $m -> addOne( $data );
-		if( $re[0] == 1 ){
+		if( $re[0] == 2 ){
 			output( 5, $this -> lang[1] ,array( 'r_id' => $re[1] ) );
 		}else{
 			output( 4, $this -> lang[2] );
 		}
+	}
+	public function del(){
+		$m = \app\rbac\module\Roles::instance();
+		$id = req( 0,'id' );
+		$re = $m -> delOne( $id );
+		var_dump( $re );
 	}
 
 	public function get(){
