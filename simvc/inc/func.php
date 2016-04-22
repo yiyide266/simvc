@@ -13,7 +13,7 @@ function conf_merge( $conf ){
 	$config = $config::instance();
 	$config -> merge( $conf );
 }
-/*URLo?¡ê¡è?|¡§?START*/
+/*URLo??¨º?¨¨?|?¡ì?START*/
 function req( $method ,$key,$value = null ){
 	$r = simvc\lib\request\Request::instance();
 	if( is_null( $value ) ){
@@ -82,7 +82,7 @@ function urlchar_up( $str ){
 	}
 	return $str;
 }
-/*URLo?¡ê¡è?|¡§?END*/
+/*URLo??¨º?¨¨?|?¡ì?END*/
 function _crc32( $str ){
 	return sprintf( '%u', crc32( $str ) );
 }
@@ -140,17 +140,17 @@ function handle_err( $type, $status ){
 }
 
 /**
- * URL???¡§?¨°
- * @param string $url ???¡§?¨°¦Ì?URL¦Ì??¡¤
- * @param integer $time ???¡§?¨°¦Ì?¦Ì¨¨¡äy¨º¡À??¡ê¡§??¡ê?
- * @param string $msg ???¡§?¨°?¡ã¦Ì?¨¬¨¢¨º?D??¡é
+ * URL????¡ì?¡§¡ã
+ * @param string $url ????¡ì?¡§¡ã|¨¬?URL|¨¬???¡è
+ * @param integer $time ????¡ì?¡§¡ã|¨¬?|¨¬¡§¡§??y¡§o?¨¤???¨º?¡ì???¨º?
+ * @param string $msg ????¡ì?¡§¡ã???|¨¬?¡§?¡§¡é¡§o?D???¨¦
  * @return void
  */
 function redirect($url, $time=0, $msg='') {
-    //?¨¤DDURL¦Ì??¡¤?¡ì3?
+    //?¡§¡èDDURL|¨¬???¡è??¨¬3?
     $url        = str_replace(array("\n", "\r"), '', $url);
     if (empty($msg))
-        $msg    = "?¦Ì¨ª3???¨²{$time}????o¨®¡Á??¡¥¨¬?¡Áa¦Ì?{$url}¡ê?";
+        $msg    = "?|¨¬¡§a3???¡§2{$time}????o¡§??¨¢???£¤¡§???¨¢a|¨¬?{$url}?¨º?";
     if (!headers_sent()) {
         // redirect
         if (0 === $time) {
@@ -180,14 +180,14 @@ function send($url, $params = array() , $headers = array()) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $txt = curl_exec($ch);
         if (curl_errno($ch)) {
-            //trace(curl_error($ch) , '¨¦y??¨ª¡§?a3?¡ä¨ª', 'NOTIC', true);
+            //trace(curl_error($ch) , '¡§|y??¡§a?¡ì?a3???¡§a', 'NOTIC', true);
             
             return false;
         }
         curl_close($ch);
         $ret = json_decode($txt, true);
         if (!$ret) {
-            //trace('?¨®?¨²[' . $url . ']¡¤¦Ì????¨º?2??y¨¨¡¤', '¨¦y??¨ª¡§?a3?¡ä¨ª', 'NOTIC', true);
+            //trace('?¡§??¡§2[' . $url . ']?¡è|¨¬????¡§o?2??y¡§¡§?¡è', '¡§|y??¡§a?¡ì?a3???¡§a', 'NOTIC', true);
             
             return false;
         }
@@ -242,13 +242,13 @@ function sess_token_del( $k ){
 
 
 function filter_sql( $param ){
-	return !preg_match( '/(\s+or+\s)|(;)/', $param );
+	return preg_match( '/(\s+or+\s)|(;)/', $param );
 }
 function filter_sql_array( $arr ){
 	foreach( $arr as $k => $v ){
-		if(filter_sql( $v )){ return false; }
+		if(filter_sql( $v )){ return true; }
 	}
-	return true;
+	return false;
 }
 
 function output( $type, $msg = '', $data = array() ){
