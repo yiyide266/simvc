@@ -24,12 +24,22 @@ class UsersController extends \simvc\lib\controller\C{
 			output( 4, $this -> lang[2] );
 		}
 	}
+	public function del(){
+		$m = \app\rbac\module\Users::instance();
+		$id = req( 0,'id' );
+		$re = $m -> delOne( $id );
+		if( in_array($re[0], array(1))){
+			output( 5, '', $re[1]);
+		}else{
+			output( 4, '', $re[1]);
+		}
+	}
 
 	public function get(){
 		$m = new \app\rbac\module\Users();
 		$id = req( 0,'id' );
 		$re = $m -> getOne( $id );
-		if( $re[0] == 1 ){
+		if( $re ){
 			output( 5, '', $re);
 		}else{
 			output( 4, '' );
