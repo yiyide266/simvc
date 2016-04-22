@@ -11,7 +11,7 @@ class Cookie{
 	}
 	
 	public static function get( $name ){
-		return $_COOKIE[$name];
+		return isset($_COOKIE[$name])?$_COOKIE[$name]:null;
 	}
 	
 	public static function set( $name, $value, $expire, $path = '/' ){
