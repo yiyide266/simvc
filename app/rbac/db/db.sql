@@ -1,7 +1,7 @@
 /*\u7528\u6237\u8868users*/
 CREATE TABLE `sim_users` (
 `u_id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`u_account_hash` INT( 10 ) UNSIGNED NOT NULL ,
+`u_account_hash` BIGINT( 11 ) UNSIGNED NOT NULL ,
 `u_account` VARCHAR( 16 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL	UNIQUE ,
 `u_pass` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
 `u_pid` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
@@ -72,7 +72,7 @@ status:4,插入子节点成功，返回插入u_id
 */
 DROP PROCEDURE IF EXISTS insert_user;
 DELIMITER //
-CREATE PROCEDURE insert_user( IN p_acc_hash INT(10), IN p_acc VARCHAR(16), IN p_pass VARCHAR(32), IN p_pid INT(10), IN p_t_s INT(10) )
+CREATE PROCEDURE insert_user( IN p_acc_hash BIGINT(11), IN p_acc VARCHAR(16), IN p_pass VARCHAR(32), IN p_pid INT(10), IN p_t_s INT(10) )
 BEGIN
 DECLARE d_count INT DEFAULT 0;
 DECLARE d_status INT DEFAULT 0;
