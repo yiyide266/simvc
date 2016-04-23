@@ -17,7 +17,7 @@ class CnodeAccessController extends \simvc\lib\controller\C{
 		$m = \app\rbac\module\CnodeAccess::instance();
 		$re = $m -> addOne( $data );
 		if( $re[0] == 3 ){
-			output( 5, $this -> lang[1], $re[1] );
+			output( 5, $this -> lang[1] );
 		}else{
 			output( 4, $this -> lang[2] );
 		}
