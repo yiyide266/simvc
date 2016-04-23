@@ -40,24 +40,27 @@ class CnodeAccess extends \simvc\lib\module\Module{
 		$m = \app\rbac\module\Cnode::instance();
 		$re = $m -> getFathers( $data['n_id'] );
 		if( $re === false ){ return array(2);  }
-		$instId = array();
+		$instP = array();
 		if( !empty($re) ){
 			foreach ($re as $v) {
 				$p = array( 'r_id' => $data['r_id'], 'n_id' => $v );
 				if( !$this -> getOne( $p ) ){
-					$instId[] = $this -> add( $p );
+					$instP[] = $p;
 				}
 			}
+			
 		}
+
 		$re = $m -> getChilds( $data['n_id'] );
 		foreach ($re as $v) {
 			$p = array( 'r_id' => $data['r_id'], 'n_id' => $v['n_id'] );
 			if( !$this -> getOne( $p ) ){
-				$instId[] = $this -> add( $p );
+				$instP[] = $p;
 			}
 		}
-		if($instId){
-			return array(3,$instId);
+		
+		if($this -> add( array( array('r_id','n_id'), $instP), 1 )){
+			return array(3);
 		}else{
 			return array(4);
 		}
@@ -109,7 +112,7 @@ class CnodeAccess extends \simvc\lib\module\Module{
 	 * @return mixed       return node row or false when row is not exsist
 	 */
 	public function getUserPermit( $data ){
-		$sql = 'SELECT `c`.`n_id`,`c`.`n_name`,`c`.`n_spec`,`c`.`n_type`,`c`.`n_pid` FROM `'.conf( 'sys_db_prefix' ).'users` AS `u`'.
+		$sql = 'SELECT `c`.`n_id`,`c`.`n_name`,`c`.`n_spec`,`c`.`n_type`,`c`.`n_pid` FROM `'.conf( 'sys_db_prefix' ).'users` AS `u` '.
 		'RIGHT JOIN `'.conf( 'sys_db_prefix' ).'user_roles` AS `ur` ON `u`.`u_id` = `ur`.`u_id` '.
 		'RIGHT JOIN `'.conf( 'sys_db_prefix' ).'cnode_access` AS `ca` ON `ur`.`r_id` = `ca`.`r_id` '.
 		'RIGHT JOIN `'.conf( 'sys_db_prefix' ).'cnode` AS `c` ON `ca`.`n_id` = `c`.`n_id` '.
