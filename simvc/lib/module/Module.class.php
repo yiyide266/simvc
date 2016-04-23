@@ -133,6 +133,25 @@ class Module{
 		$sql = 'INSERT INTO `'.$this -> tab_name.'` ('.$data_key.')VALUES('.$data_val.')';
 		return $sql;
 	}
+
+	public function assem_insert_mulit( $data ){
+		$data_key = '';
+		$data_val = '';
+		foreach( $data[0] as $v ){
+			$data_key .= '`'.$v.'`,';
+		}
+		foreach( $data[1] as $v ){
+			$values = '(';
+			foreach( $v as $j ){
+				$values .= '\''.$j.'\',';
+			}
+			$data_val .= substr( $values, 0, -1 ).'),';
+		}
+		$data_key = substr( $data_key, 0, -1 );
+		$data_val = substr( $data_val, 0, -1 );
+		$sql = 'INSERT INTO `'.$this -> tab_name.'` ('.$data_key.')VALUES'.$data_val;
+		return $sql;
+	}
 	
 	public function assem_update( $data ){
 		$sql = 'UPDATE `'.$this -> tab_name.'` SET ';
@@ -195,9 +214,13 @@ class Module{
 	/*
 	D¡ä¨¨?¡¤?¡¤¡§
 	*/
-	public function add( $data ){
+	public function add( $data, $type=0 ){
+		if( $type == 0 ){
+			$this -> lastSql = $this -> assem_insert( $data );
+		}else{
+			$this -> lastSql = $this -> assem_insert_mulit( $data );
+		}
 		
-		$this -> lastSql = $this -> assem_insert( $data );
 		return $this -> db -> insert( $this -> lastSql );
 	}
 	/*
