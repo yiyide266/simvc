@@ -5,7 +5,12 @@ class Module{
 	protected $filter = array();
 	protected $tab_name;
 	private static $instance = array();
-
+	/**
+	 * declare parameter filter
+	 * @attribute  protected
+	 * @type array
+	 */
+	protected $params_filter = array();
 	/*¨®????a??*/
 	protected $lastSql;
 	protected $condition;
@@ -286,6 +291,23 @@ class Module{
 	/*¨¬¨¢??¨º???*/
 	public function commit(){
 		$this -> db -> commit();
+	}
+
+	public function filter( $inneed, $params ){
+		if( count( $inneed ) != count( $params ) ){
+			return array( 0 );
+		}
+		foreach ($inneed as $k => $v) {
+			if( !isset($params[$v]) ){
+				return array( 1, $k );
+			}
+			if( isset($this->params_filter[$v]) ){
+				if( !preg_match( $this->params_filter[$v][0], $params[$v] ) ){
+					return array( 2, $k );
+				}
+			}
+		}
+		return array(3);
 	}
 	
 }
