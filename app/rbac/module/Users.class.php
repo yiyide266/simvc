@@ -15,6 +15,18 @@ class Users extends \simvc\lib\module\Module{
 	 */
 	protected $tab_name = 'users';
 	/**
+	 * declare parameter filter
+	 * @attribute  protected
+	 * @type array
+	 */
+	protected $params_filter = array(
+		'u_id' => array( '/^[\d]+$/' ),
+		'u_account' => array( '/^[A-Za-z0-9_]{5,16}$/' ),
+		'u_pass' => array( '/^[\S]{6,16}$/' ),
+		'u_pid' => array( '/^[\d]+$/' ),
+		'u_t_s' => array( '/^[\d]+$/' ),
+		);
+	/**
 	 * declare this module name
 	 * @param  void
 	 * @return string
@@ -33,7 +45,9 @@ class Users extends \simvc\lib\module\Module{
 	 *   				   [1]=>dependent on [0],last insert id or sql status
 	 */
 	public function addOne( $data ){
-		if( filter_sql_array( $data ) ){ return array(0); }
+		$filter = $this -> filter( array( 'u_account','u_pass','u_pid','u_t_s' ), $data );
+		if( $filter[0] != 3 ){ return array(0,$filter); }
+		//if( filter_sql_array( $data ) ){ return array(0); }
 		$sql = sprintf( 'call insert_user(\'%s\', \'%s\', \'%s\', \'%d\', \'%d\')',_crc32($data['u_account']), $data['u_account'], md5($data['u_pass']), $data['u_pid'], $data['u_t_s']  );
 		$re = $this -> getRow( $sql );
 		if( in_array($re['status'], array( 1,4 )) ){ return array(1,$re['u_id']); }
@@ -51,8 +65,9 @@ class Users extends \simvc\lib\module\Module{
 	 *   				   [1]=>dependent on [0],effect row count or sql status
 	 */
 	public function delOne( $data ){
-		if( filter_sql( $data ) ){ return array(0); }
-		$sql = sprintf( 'call drop_user( \'%d\' )',$data  );
+		$filter = $this -> filter( array( 'u_id' ), $data );
+		if( $filter[0] != 3 ){ return array(0,$filter); }
+		$sql = sprintf( 'call drop_user( \'%d\' )',$data['u_id']  );
 		$re = $this -> getRow( $sql );
 		if( $re['status'] == 2 ){ return array(1,$re['effect']); }
 		else{ return array(2,$re['status']); }
