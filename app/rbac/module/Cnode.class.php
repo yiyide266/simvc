@@ -15,6 +15,19 @@ class Cnode extends \simvc\lib\module\Module{
 	 */
 	protected $tab_name = 'cnode';
 	/**
+	 * declare parameter filter
+	 * @attribute  protected
+	 * @type array
+	 */
+	protected $params_filter = array(
+		'n_id' => array( '/^[\d]+$/' ),
+		'n_name' => array( '/^[A-Za-z0-9]{1,16}$/' ),
+		'n_icon' => array( '/^[\d]+$/' ),
+		'n_type' => array( '/^[0123]{1}$/' ),
+		'n_pid' => array( '/^[\d]+$/' ),
+		'n_t_s' => array( '/^[\d]+$/' ),
+		);
+	/**
 	 * declare this module name
 	 * @param  void
 	 * @return string
@@ -33,7 +46,9 @@ class Cnode extends \simvc\lib\module\Module{
 	 *   				   [1]=>dependent on [0],last insert id or sql status
 	 */
 	public function addOne( $data ){
-		if( filter_sql_array( $data ) ){ return array(0); }
+		$filter = $this -> filter( array( 'n_name','n_spec','n_icon','n_type','n_pid','n_t_s' ), $data );
+		if( $filter[0] != 3 ){ return array(0,$filter); }
+		//if( filter_sql_array( $data ) ){ return array(0); }
 		$sql = sprintf( 'call insert_cnode(\'%s\', \'%s\', \'%s\', \'%d\', \'%d\', \'%d\')',$data['n_name'], $data['n_spec'], $data['n_icon'], $data['n_type'], $data['n_pid'], $data['n_t_s']  );
 		$re = $this -> getRow( $sql );
 		if( in_array($re['status'], array( 1,5 )) ){ return array(1,$re['n_id']); }
@@ -51,8 +66,10 @@ class Cnode extends \simvc\lib\module\Module{
 	 *   				   [1]=>dependent on [0],effect row count or sql status
 	 */
 	public function delOne( $data ){
-		if( filter_sql( $data ) ){ return array(0); }
-		$sql = sprintf( 'call drop_cnode( \'%d\' )',$data  );
+		$filter = $this -> filter( array( 'n_id' ), $data );
+		if( $filter[0] != 3 ){ return array(0,$filter); }
+		//if( filter_sql_array( $data ) ){ return array(0); }
+		$sql = sprintf( 'call drop_cnode( \'%d\' )',$data['n_id']  );
 		$re = $this -> getRow( $sql );
 		if( $re['status'] == 2 ){ return array(1,$re['effect']); }
 		else{ return array(2,$re['status']); }
