@@ -26,8 +26,8 @@ class UsersController extends \simvc\lib\controller\C{
 	}
 	public function del(){
 		$m = \app\rbac\module\Users::instance();
-		$id = req( 0,'id' );
-		$re = $m -> delOne( $id );
+		$data['u_id'] = req( 0,'id' );
+		$re = $m -> delOne( $data );
 		if( in_array($re[0], array(1))){
 			output( 5, '', $re[1]);
 		}else{
