@@ -15,6 +15,15 @@ class Roles extends \simvc\lib\module\Module{
 	 */
 	protected $tab_name = 'roles';
 	/**
+	 * declare parameter filter
+	 * @attribute  protected
+	 * @type array
+	 */
+	protected $params_filter = array(
+		'r_name' => array( '/.+/' ),
+		'r_des' => array( '/.+/' ),
+		);
+	/**
 	 * declare this module name
 	 * @param  void
 	 * @return string
@@ -34,7 +43,9 @@ class Roles extends \simvc\lib\module\Module{
 	 *   				   [1]=>dependent on [0],last insert id or unset
 	 */
 	public function addOne( $data ){
-		if( filter_sql_array( $data ) ){ return array(0); }
+		$filter = $this -> filter( array( 'r_name','r_des' ), $data );
+		if( $filter[0] != 3 ){ return array(0,$filter); }
+		//if( filter_sql_array( $data ) ){ return array(0); }
 		if( empty( $data['r_name'] ) ){ return array(1); }
 		$instId = $this -> add( $data );
 		if($instId){
