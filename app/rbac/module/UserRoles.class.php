@@ -15,6 +15,15 @@ class UserRoles extends \simvc\lib\module\Module{
 	 */
 	protected $tab_name = 'user_roles';
 	/**
+	 * declare parameter filter
+	 * @attribute  protected
+	 * @type array
+	 */
+	protected $params_filter = array(
+		'u_id' => array( '/^[\d]+$/' ),
+		'r_id' => array( '/^[\d]+$/' ),
+		);
+	/**
 	 * declare this module name
 	 * @param  void
 	 * @return string
@@ -34,7 +43,9 @@ class UserRoles extends \simvc\lib\module\Module{
 	 *   				   [1]=>dependent on [0],last insert id or sql status
 	 */
 	public function addOne( $data ){
-		if( filter_sql_array( $data ) ){ return array(0); }
+		$filter = $this -> filter( array( 'u_id','r_id' ), $data );
+		if( $filter[0] != 3 ){ return array(0,$filter); }
+		//if( filter_sql_array( $data ) ){ return array(0); }
 		if( $this -> getOne( $data ) ){ return array(1); }
 		$instId = $this -> add( $data );
 		if($instId){
