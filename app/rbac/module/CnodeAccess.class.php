@@ -15,6 +15,15 @@ class CnodeAccess extends \simvc\lib\module\Module{
 	 */
 	protected $tab_name = 'cnode_access';
 	/**
+	 * declare parameter filter
+	 * @attribute  protected
+	 * @type array
+	 */
+	protected $params_filter = array(
+		'r_id' => array( '/^[\d]+$/' ),
+		'n_id' => array( '/^[\d]+$/' ),
+		);
+	/**
 	 * declare this module name
 	 * @param  void
 	 * @return string
@@ -35,7 +44,9 @@ class CnodeAccess extends \simvc\lib\module\Module{
 	 *   				   [1]=>dependent on [0],last insert id or unset
 	 */
 	public function addOne( $data ){
-		if( filter_sql_array( $data ) ){ return array(0); }
+		$filter = $this -> filter( array( 'r_id','n_id' ), $data );
+		if( $filter[0] != 3 ){ return array(0,$filter); }
+		//if( filter_sql_array( $data ) ){ return array(0); }
 		if( $this -> getOne( $data ) ){ return array(1); }
 		$m = \app\rbac\module\Cnode::instance();
 		$re = $m -> getFathers( $data['n_id'] );
