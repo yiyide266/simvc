@@ -255,4 +255,12 @@ function output( $type, $msg = '', $data = array() ){
 	echo json_encode( array( 'status' => $type, 'msg' => $msg, 'data' => $data ) );
 	exit;
 }
+
+function explode_quo( $arr, $is_quo = true ){
+	$str = implode(',', $arr);
+	if( $is_quo ){
+		$str = "'".str_replace( ',', '\',\'', $str )."'";
+	}
+	return $str;
+}
 ?>
