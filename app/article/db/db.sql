@@ -1,7 +1,8 @@
-DROP TABLE `sim_art_taglink`;
-DROP TABLE `sim_article`;
-DROP TABLE `sim_art_tag`;
-DROP TABLE `sim_art_category`;
+DROP TABLE IF EXISTS `sim_art_comment`;
+DROP TABLE IF EXISTS `sim_art_taglink`;
+DROP TABLE IF EXISTS `sim_article`;
+DROP TABLE IF EXISTS `sim_art_tag`;
+DROP TABLE IF EXISTS`sim_art_category`;
 
 CREATE TABLE `sim_art_category` (
 `c_id`	SMALLINT( 5 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
@@ -19,7 +20,7 @@ INDEX category_search ( `c_t_f`, `c_t_r_l`, `c_t_r_r`, `c_t_l`, `c_t_s` )
 
 CREATE TABLE `sim_art_tag` (
 `t_id` SMALLINT( 5 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`t_name` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+`t_name` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL  UNIQUE
 ) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 
@@ -35,10 +36,15 @@ CREATE TABLE `sim_article` (
 `a_update_time` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
 `a_cid` SMALLINT( 5 ) UNSIGNED NOT NULL DEFAULT '0',
 `a_sort` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`a_click` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`a_comment_count` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
 FOREIGN KEY (`a_creat_uid`) REFERENCES `sim_users`(`u_id`),
 FOREIGN KEY (`a_cid`) REFERENCES `sim_art_category`(`c_id`),
 INDEX a_search ( `a_title`(10) ),
-INDEX a_search_2 ( `a_cid` )
+INDEX a_search_2 ( `a_cid` ),
+INDEX a_search_3 ( `a_sort` ),
+INDEX a_search_4 ( `a_click` ),
+INDEX a_search_5 ( `a_comment_count` )
 ) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE `sim_art_taglink` (
@@ -46,7 +52,30 @@ CREATE TABLE `sim_art_taglink` (
 `t_id` SMALLINT( 5 ) UNSIGNED NOT NULL ,
 `a_id` INT( 10 ) UNSIGNED NOT NULL ,
 FOREIGN KEY (`t_id`) REFERENCES `sim_art_tag`(`t_id`),
-FOREIGN KEY (`a_id`) REFERENCES `sim_article`(`a_id`)
+FOREIGN KEY (`a_id`) REFERENCES `sim_article`(`a_id`),
+INDEX tl_search ( `t_id`,`a_id` )
+) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+/*article comment*/
+CREATE TABLE `sim_art_comment` (
+`c_id`	SMALLINT( 5 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`c_aid` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_uid` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_content` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+`c_comment_time` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_status` TINYINT( 3 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_agree` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_disagree` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_pid` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_t_f` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_t_r_l` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_t_r_r` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_t_l` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+`c_t_s` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
+FOREIGN KEY (`c_uid`) REFERENCES `sim_users`(`u_id`),
+FOREIGN KEY (`c_aid`) REFERENCES `sim_article`(`a_id`),
+INDEX comment_search ( `c_t_f`, `c_t_r_l`, `c_t_r_r`, `c_t_l`, `c_t_s` ),
+INDEX comment2_search ( `c_agree` )
 ) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 
@@ -84,12 +113,12 @@ SELECT * FROM `sim_art_category` AS a RIGHT JOIN `sim_article` AS b ON a.`c_id` 
 
 
 /*
-²åÈëart_category£¬´æ´¢¹ý³Ì
-status:0,²åÈë×æÏµ½ÚµãÊ§°Ü£¬»Ø¹ö
-status:1,²åÈë×æÏµ½Úµã³É¹¦£¬·µ»Ø²åÈëu_id
-status:2,¸¸½Úµã²»´æÔÚ
-status:3,²åÈë×æÏµ½ÚµãÊ§°Ü£¬»Ø¹ö
-status:4,²åÈë×Ó½Úµã³É¹¦£¬·µ»Ø²åÈëu_id
+2?¨¨?art_category¡ê?¡ä?¡ä¡é1y3¨¬
+status:0,2?¨¨?¡Á??¦Ì?¨²¦Ì?¨º¡ì¡ã¨¹¡ê???1?
+status:1,2?¨¨?¡Á??¦Ì?¨²¦Ì?3¨¦1|¡ê?¡¤¦Ì??2?¨¨?u_id
+status:2,???¨²¦Ì?2?¡ä??¨²
+status:3,2?¨¨?¡Á??¦Ì?¨²¦Ì?¨º¡ì¡ã¨¹¡ê???1?
+status:4,2?¨¨?¡Á¨®?¨²¦Ì?3¨¦1|¡ê?¡¤¦Ì??2?¨¨?u_id
 */
 DROP PROCEDURE IF EXISTS insert_art_category;
 DELIMITER //
@@ -153,10 +182,10 @@ call insert_art_category('category_1', 'spec', '0', '0', '0');
 
 
 /*
-art_categoryÉ¾³ý´æ´¢¹ý³Ì
-status:0,½Úµã²»´æÔÚ
-status:1,Ö´ÐÐÊ§°Ü£¬»Ø¹ö
-status:2,Ö´ÐÐ³É¹¦£¬·µ»ØÓ°ÏìÐÐÊýeffect
+art_category¨¦?3y¡ä?¡ä¡é1y3¨¬
+status:0,?¨²¦Ì?2?¡ä??¨²
+status:1,?¡äDD¨º¡ì¡ã¨¹¡ê???1?
+status:2,?¡äDD3¨¦1|¡ê?¡¤¦Ì??¨®¡ã?¨¬DD¨ºyeffect
 */
 DROP PROCEDURE IF EXISTS drop_art_category;
 DELIMITER //
@@ -205,42 +234,16 @@ call drop_art_category( 2 );
 
 
 
-/*article comment*/
-CREATE TABLE `sim_art_comment` (
-`c_id`	SMALLINT( 5 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`c_aid` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-`c_uid` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-`c_content` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-`c_comment_time` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-`c_status` TINYINT( 3 ) UNSIGNED NOT NULL DEFAULT '0',
-`c_pid` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-`c_t_f` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-`c_t_r_l` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-`c_t_r_r` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-`c_t_l` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-`c_t_s` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-FOREIGN KEY (`c_uid`) REFERENCES `sim_users`(`u_id`),
-FOREIGN KEY (`c_aid`) REFERENCES `sim_article`(`a_id`),
-INDEX comment_search ( `c_t_f`, `c_t_r_l`, `c_t_r_r`, `c_t_l`, `c_t_s` )
-) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
-CREATE TABLE `sim_art_comment_unread` (
-`cu_id`	SMALLINT( 5 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`c_id` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-`u_id` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
-FOREIGN KEY (`c_id`) REFERENCES `sim_art_comment`(`c_id`),
-FOREIGN KEY (`u_id`) REFERENCES `sim_users`(`u_id`),
-INDEX comment_unread_search ( `c_id`, `u_id` )
-) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 
 /*
-²åÈëart_comment£¬´æ´¢¹ý³Ì
-status:0,²åÈë×æÏµ½ÚµãÊ§°Ü£¬»Ø¹ö
-status:1,²åÈë×æÏµ½Úµã³É¹¦£¬·µ»Ø²åÈëu_id
-status:2,¸¸½Úµã²»´æÔÚ
-status:3,²åÈë×æÏµ½ÚµãÊ§°Ü£¬»Ø¹ö
-status:4,²åÈë×Ó½Úµã³É¹¦£¬·µ»Ø²åÈëu_id
+2?¨¨?art_comment¡ê?¡ä?¡ä¡é1y3¨¬
+status:0,2?¨¨?¡Á??¦Ì?¨²¦Ì?¨º¡ì¡ã¨¹¡ê???1?
+status:1,2?¨¨?¡Á??¦Ì?¨²¦Ì?3¨¦1|¡ê?¡¤¦Ì??2?¨¨?u_id
+status:2,???¨²¦Ì?2?¡ä??¨²
+status:3,2?¨¨?¡Á??¦Ì?¨²¦Ì?¨º¡ì¡ã¨¹¡ê???1?
+status:4,2?¨¨?¡Á¨®?¨²¦Ì?3¨¦1|¡ê?¡¤¦Ì??2?¨¨?u_id
 */
 DROP PROCEDURE IF EXISTS insert_art_comment;
 DELIMITER //
@@ -303,10 +306,10 @@ DELIMITER ;
 call insert_art_comment('1', '1', 'comment_1', '0', '1', '0', '0');
 
 /*
-art_commentÉ¾³ý´æ´¢¹ý³Ì
-status:0,½Úµã²»´æÔÚ
-status:1,Ö´ÐÐÊ§°Ü£¬»Ø¹ö
-status:2,Ö´ÐÐ³É¹¦£¬·µ»ØÓ°ÏìÐÐÊýeffect
+art_comment¨¦?3y¡ä?¡ä¡é1y3¨¬
+status:0,?¨²¦Ì?2?¡ä??¨²
+status:1,?¡äDD¨º¡ì¡ã¨¹¡ê???1?
+status:2,?¡äDD3¨¦1|¡ê?¡¤¦Ì??¨®¡ã?¨¬DD¨ºyeffect
 */
 DROP PROCEDURE IF EXISTS drop_art_comment;
 DELIMITER //
