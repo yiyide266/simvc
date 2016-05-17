@@ -73,24 +73,16 @@ class Article extends \simvc\lib\module\Module{
 	 */
 	public function delMulti( $data ){
 		if( filter_sql_array( $data ) ){ return array(0); }
-		return $this -> where(array( 't_id' => array( 'in', explode_quo( $data, false ) ) ) ) -> delete();
+		return $this -> where(array( 'a_id' => array( 'in', explode_quo( $data, false ) ) ) ) -> delete();
 	}
 	/**
-	 * get a art_tag return it
+	 * get an aticle return it
 	 * @param  int   $data   n_id
 	 * @return mixed       return node row or false when row is not exsist
 	 */
 	public function getOne( $data ){
 		$data = intval($data);
-		return $this -> where( array( 't_id' => $data ) ) -> find();
-	}
-	/**
-	 * get all art_tag return it
-	 * @param  int   $data   n_id
-	 * @return mixed       return node row or false when row is not exsist
-	 */
-	public function getAll(){
-		return $this -> select();
+		return $this -> where( array( 'a_id' => $data ) ) -> find();
 	}
 	/**
 	 * pagination
