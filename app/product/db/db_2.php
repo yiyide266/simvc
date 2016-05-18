@@ -29,10 +29,12 @@ CREATE TABLE `sim_prod_sprop` (
 `spp_id`	INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `spp_name` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 `spp_pid` SMALLINT( 5 ) UNSIGNED NOT NULL DEFAULT '0',
-`spp_fid` SMALLINT( 5 ) UNSIGNED NOT NULL DEFAULT '0',
+`spp_fid` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0' ,
 `spp_t_s` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
 FOREIGN KEY (`spp_pid`) REFERENCES `sim_prod_sproppackage`(`sppp_id`),
-INDEX sprop_search ( `spp_pid`, `spp_t_s` )
+#FOREIGN KEY (`spp_fid`) REFERENCES `sim_prod_sprop`(`spp_id`),
+INDEX sprop_search ( `spp_pid`, `spp_t_s` ),
+INDEX sprop_search_2 ( `spp_pid`, `spp_fid` )
 ) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 CREATE TABLE `sim_prod_spropval` (
@@ -153,7 +155,7 @@ SELECT * FROM `sim_prod_category` AS `a` RIGHT JOIN `sim_product`  AS `b` ON `a`
 
 
 
-INSERT INTO `sim_prod_sprop` ( `spp_name`,`spp_pid` ) VALUES ( '°æ±¾','2' ),( 'îÉ«','2' ),( 'ÐÍÌ','3' );
+INSERT INTO `sim_prod_sprop` ( `spp_name`,`spp_pid`,`spp_fid` ) VALUES ( '°æ±¾','2','0' ),( 'îÉ«','2','1' ),( 'ÐÍÌ','3','0' );
 
 INSERT INTO `sim_prod_spropval` ( `sppv_val`,`sppv_spid` ) VALUES ( 'µÍÅä°æ','1' ),( 'ËÊ°æ','1' ),( '¸ßÅä°æ','1' ),
 ( 'ºÚ','2' ),( 'ãy','2' ),( 'Ãµ¹å½ð','2' ),
