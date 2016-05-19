@@ -50,7 +50,8 @@ CREATE TABLE `sim_prod_spropval` (
 `sppv_sku` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
 `sppv_t_s` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0',
 FOREIGN KEY (`sppv_spid`) REFERENCES `sim_prod_sprop`(`spp_id`),
-INDEX sprop_search ( `sppv_pid`, `sppv_t_s` )
+INDEX sprop_search ( `sppv_pid`, `sppv_t_s` ),
+INDEX sprop_search_2 ( `sppv_spid` )
 ) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 
@@ -164,6 +165,8 @@ INSERT INTO `sim_prod_spropval` ( `sppv_val`,`sppv_spid` ) VALUES ( 'µÍÅä°�
 INSERT INTO `sim_prod_sproplink` ( `sppl_pvid`,`sppl_pid` ) VALUES ( '2','1' ),( '6','1' ),( '8','1' ),( '10','3' ),( '8','3' );
 
 SELECT * FROM `sim_product` AS `a` RIGHT JOIN `sim_prod_sproppackage` AS `b` ON `a`.`p_spid` = `b`.`sppp_id` RIGHT JOIN `sim_prod_sprop` AS `c` ON `b`.`sppp_id` = `c`.`spp_pid` RIGHT JOIN `sim_prod_spropval` AS `d` ON `c`.`spp_id` = `d`.`sppv_spid` WHERE a.`p_id` = 1;
+
+SELECT * FROM `sim_prod_spropval` WHERE `sppv_spid` = 8 GROUP BY `sppv_val` ORDER BY `sppv_id`;
 
 
 
